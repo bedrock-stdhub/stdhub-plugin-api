@@ -3,6 +3,10 @@ import { $readFileAsBytes, $readFileAsText } from './file';
 import { $readRootConfig, $readSubConfig } from './config';
 import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
+import { Command } from '@/command';
+import { $registerCommand, $startService } from '@/command/service';
+
+const commandPrefix = '.';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -15,6 +19,8 @@ export class StdhubPluginApi {
   constructor(namespace: string) {
     this.namespace = namespace;
     this.backendAddress = variables.get('backendAddress');
+
+    $startService(commandPrefix);
   }
 
   /**
@@ -105,5 +111,17 @@ export class StdhubPluginApi {
    */
   async deleteData(subDataPath: string) {
     return $deleteData(this.backendAddress, this.namespace, subDataPath);
+  }
+
+  /**
+   * Register a command.
+   * @param name The name of command. When calling, use `.${name}`.
+   * @param command The command to register. At lease one pattern should be specified.
+   */
+  registerCommand(name: string, command: Command) {
+    if (command.handlers.length === 0) {
+      throw 'At lease one pattern should be specified';
+    }
+    return $registerCommand(name, command);
   }
 }

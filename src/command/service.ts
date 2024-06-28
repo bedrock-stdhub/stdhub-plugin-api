@@ -1,6 +1,6 @@
 import { ChatSendBeforeEventSignal, world } from '@minecraft/server';
-import { Command } from './entity';
 import $tokenize from './tokenize';
+import { Command } from '@/command/index';
 
 const commands: Map<string, Command> = new Map();
 let listenerRef: Parameters<ChatSendBeforeEventSignal['subscribe']>[0] | null = null;

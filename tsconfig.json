@@ -7,10 +7,7 @@
     "moduleResolution": "bundler",
     "skipLibCheck": true,
     "outDir": "out",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "baseUrl": "."
   },
   "include": [
     "src/**/*"

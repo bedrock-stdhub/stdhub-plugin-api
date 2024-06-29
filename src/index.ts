@@ -3,8 +3,8 @@ import { $readFileAsBytes, $readFileAsText } from './file';
 import { $readRootConfig, $readSubConfig } from './config';
 import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
-import { Command } from '@/command';
-import { $registerCommand, $startService } from '@/command/service';
+import { Command } from './command';
+import { $registerCommand, $startService } from './command/service';
 
 const commandPrefix = '.';
 

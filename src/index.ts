@@ -125,3 +125,5 @@ export class StdhubPluginApi {
     return $registerCommand(name, command);
   }
 }
+
+export { Command };

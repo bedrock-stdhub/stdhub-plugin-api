@@ -1,39 +1,54 @@
-import { ChatSendBeforeEventSignal, world } from '@minecraft/server';
+import {
+  Player,
+  ScriptEventCommandMessageAfterEventSignal,
+  system,
+} from '@minecraft/server';
 import $tokenize from './tokenize';
 import { Command } from './index';
+import { $postJson } from '../net';
+import { $getPlayerById } from '../player';
+import { Terminal } from '../index';
 
 const commands: Map<string, Command> = new Map();
-let listenerRef: Parameters<ChatSendBeforeEventSignal['subscribe']>[0] | null = null;
+let listenerRef: Parameters<ScriptEventCommandMessageAfterEventSignal['subscribe']>[0] | null = null;
 
-export function $startService(prefix: string) {
+const $terminal = new Terminal();
+
+export function $startService(namespace: string) {
   if (listenerRef) {
     throw 'Service already running';
   }
-  listenerRef = world.beforeEvents.chatSend.subscribe(event => {
-    if (!event.message.startsWith(prefix)) return;
+  listenerRef = system.afterEvents.scriptEventReceive.subscribe(event => {
+    if (event.id !== `${namespace}:CommandDispatchEvent`) return;
 
-    const commandStr = event.message.slice(prefix.length);
-    const tokens = $tokenize(commandStr);
-    if (tokens.length === 0) return;
+    let caller: Player | Terminal;
+    const { playerId, commandString } = JSON.parse(event.message);
+    if (!playerId) {
+      caller = $terminal;
+    } else {
+      const playerOrNull = $getPlayerById(playerId);
+      if (!playerOrNull) return;
+      else caller = playerOrNull;
+    }
 
-    event.cancel = true;
+    const tokens = $tokenize(commandString);
 
     const commandName = tokens[0];
     const command = $findCommand(commandName);
     if (!command) {
-      event.sender.sendMessage(
+      caller.sendMessage(
         `§cUnknown command: ${commandName}. Please check that the command exists and you have permission to use it.`
       );
       return;
     }
     const tokensWithoutCmdName = tokens.slice(1);
     try {
-      command.$handle(event.sender, tokensWithoutCmdName);
+      command.$handle(caller, tokensWithoutCmdName);
     } catch (e) {
       if (typeof e === 'string') {
-        event.sender.sendMessage(`§c${e}`);
+        caller.sendMessage(`§c${e}`);
       } else {
-        event.sender.sendMessage(`§cInternal error: ${e}`);
+        caller.sendMessage(`§cInternal error: ${e}`);
       }
     }
   });
@@ -43,7 +58,7 @@ export function $stopService() {
   if (!listenerRef) {
     throw 'Service not running';
   }
-  world.beforeEvents.chatSend.unsubscribe(listenerRef);
+  system.afterEvents.scriptEventReceive.unsubscribe(listenerRef);
   listenerRef = null;
 }
 
@@ -51,9 +66,13 @@ export function $findCommand(name: string) {
   return commands.get(name);
 }
 
-export function $registerCommand(name: string, command: Command) {
-  if (commands.get(name)) {
-    throw `Command ${name} has been registered by others`;
+export async function $registerCommand(backendAddress: string, namespace: string, commandName: string, command: Command) {
+  const { ok } = await $postJson(`${backendAddress}/command/register`, {
+    namespace,
+    commandName
+  });
+  if (!ok || commands.has(commandName)) {
+    throw `Command ${commandName} has been registered`;
   }
-  commands.set(name, command);
+  commands.set(commandName, command);
 }

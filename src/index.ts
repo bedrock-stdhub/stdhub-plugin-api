@@ -5,6 +5,7 @@ import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
 import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
+import { $getPlayerById, $getPlayerByName } from './player';
 
 const commandPrefix = '.';
 
@@ -123,6 +124,22 @@ export class StdhubPluginApi {
       throw 'At lease one pattern should be specified';
     }
     return $registerCommand(name, command);
+  }
+
+  /**
+   * Get the Player object with the specified ID. May be undefined if the player is not present.
+   * @param id The ID (not XUID) of player.
+   */
+  getPlayerById(id: string) {
+    return $getPlayerById(id);
+  }
+
+  /**
+   * Get the Player object with the specified name. May be undefined if the player is not present.
+   * @param name The name a.k.a. Xbox gamer tag of player.
+   */
+  getPlayerByName(name: string) {
+    return $getPlayerByName(name);
   }
 }
 

@@ -39,7 +39,7 @@ export async function $postJson(url: string, body: unknown, headers?: Record<str
   }
   return {
     response,
-    ok: Math.floor(response.status / 100) === 2,
+    ok: Math.floor(response.status / 100) === 2 || Math.floor(response.status / 100) === 3,
     body: JSON.parse(response.body)
   };
 }

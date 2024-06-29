@@ -143,4 +143,10 @@ export class StdhubPluginApi {
   }
 }
 
+export class Terminal {
+  sendMessage(message: string) {
+    console.log(message);
+  }
+}
+
 export * from './command';

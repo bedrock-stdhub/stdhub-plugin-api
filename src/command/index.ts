@@ -1,5 +1,6 @@
 import $parse, { ParsePattern, Pattern } from './parse';
 import { Player } from '@minecraft/server';
+import { Terminal } from '../index';
 
 export class Command {
   constructor() {
@@ -8,7 +9,7 @@ export class Command {
   readonly handlers: {
     pattern: Pattern,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback: (player: Player, args: any) => void;
+    callback: (caller: Player | Terminal, args: any) => void;
   }[] = [];
 
   /**
@@ -85,13 +86,13 @@ export class Command {
    */
   addHandler<T extends Pattern>(
     pattern: T,
-    callback: (player: Player, args: ParsePattern<T>) => void,
+    callback: (caller: Player | Terminal, args: ParsePattern<T>) => void,
   ): this {
     this.handlers.push({ pattern, callback });
     return this;
   }
 
-  $handle(player: Player, tokens: string[]) {
+  $handle(player: Player | Terminal, tokens: string[]) {
     const partiallyUnmatched: string[] = [];
     for (const { pattern, callback } of this.handlers) {
       const parsedOrError = $parse(tokens, pattern);

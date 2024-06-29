@@ -12,7 +12,11 @@ import { Terminal } from '../index';
 const commands: Map<string, Command> = new Map();
 let listenerRef: Parameters<ScriptEventCommandMessageAfterEventSignal['subscribe']>[0] | null = null;
 
-const $terminal = new Terminal();
+const $terminal: Terminal = {
+  sendMessage(message)  {
+    console.log(message);
+  }
+};
 
 export function $startService(namespace: string) {
   if (listenerRef) {

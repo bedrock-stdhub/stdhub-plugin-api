@@ -141,10 +141,8 @@ export class StdhubPluginApi {
   }
 }
 
-export class Terminal {
-  sendMessage(message: string) {
-    console.log(message);
-  }
+export abstract class Terminal {
+  abstract readonly sendMessage: (message: string) => void;
 }
 
 export * from './command';

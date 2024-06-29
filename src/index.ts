@@ -7,8 +7,6 @@ import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
 import { $getPlayerById, $getPlayerByName } from './player';
 
-const commandPrefix = '.';
-
 export class StdhubPluginApi {
   readonly namespace: string;
   readonly backendAddress: string;
@@ -21,7 +19,7 @@ export class StdhubPluginApi {
     this.namespace = namespace;
     this.backendAddress = variables.get('backendAddress');
 
-    $startService(commandPrefix);
+    $startService(namespace);
   }
 
   /**
@@ -123,7 +121,7 @@ export class StdhubPluginApi {
     if (command.handlers.length === 0) {
       throw 'At lease one pattern should be specified';
     }
-    return $registerCommand(name, command);
+    return $registerCommand(this.backendAddress, this.namespace, name, command);
   }
 
   /**

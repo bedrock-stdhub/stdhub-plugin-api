@@ -126,4 +126,4 @@ export class StdhubPluginApi {
   }
 }
 
-export { Command };
+export * from './command';

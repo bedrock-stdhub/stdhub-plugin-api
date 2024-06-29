@@ -1,4 +1,4 @@
-import $parse, { ParsePattern, Pattern } from '@/command/parse';
+import $parse, { ParsePattern, Pattern } from './parse';
 import { Player } from '@minecraft/server';
 
 export class Command {

@@ -6,6 +6,7 @@ import { variables } from '@minecraft/server-admin';
 import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
 import { $getPlayerById, $getPlayerByName } from './player';
+import $log from './log';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -138,6 +139,14 @@ export class StdhubPluginApi {
    */
   getPlayerByName(name: string) {
     return $getPlayerByName(name);
+  }
+
+  /**
+   * Log something directly to the console.
+   * @param content The content to log. May contain color control sequences `§[0-9a-fr]`.
+   */
+  async log(content: string) {
+    await $log(this.backendAddress, this.namespace, content);
   }
 }
 

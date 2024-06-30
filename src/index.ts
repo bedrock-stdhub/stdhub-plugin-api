@@ -19,7 +19,7 @@ export class StdhubPluginApi {
     this.namespace = namespace;
     this.backendAddress = variables.get('backendAddress');
 
-    $startService(namespace);
+    $startService(this.backendAddress, this.namespace);
   }
 
   /**

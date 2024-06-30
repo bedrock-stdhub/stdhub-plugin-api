@@ -8,20 +8,20 @@ import { Command } from './index';
 import { $postJson } from '../net';
 import { $getPlayerById } from '../player';
 import { Terminal } from '../index';
+import $log from '../log';
 
 const commands: Map<string, Command> = new Map();
 let listenerRef: Parameters<ScriptEventCommandMessageAfterEventSignal['subscribe']>[0] | null = null;
 
-const $terminal: Terminal = {
-  sendMessage(message)  {
-    console.log(message);
-  }
-};
-
-export function $startService(namespace: string) {
+export function $startService(backendAddress: string, namespace: string) {
   if (listenerRef) {
     throw 'Service already running';
   }
+  const $terminal = {
+    sendMessage(message)  {
+      $log(backendAddress, namespace, message);
+    }
+  } satisfies Terminal;
   listenerRef = system.afterEvents.scriptEventReceive.subscribe(event => {
     if (event.id !== `${namespace}:CommandDispatchEvent`) return;
 

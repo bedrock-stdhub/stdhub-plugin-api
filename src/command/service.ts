@@ -50,7 +50,7 @@ export function $startService(namespace: string) {
       command.$handle(caller, tokensWithoutCmdName);
     } catch (e) {
       if (typeof e === 'string') {
-        caller.sendMessage(`§c${e}`);
+        caller.sendMessage(`${e}`);
       } else {
         caller.sendMessage(`§cInternal error: ${e}`);
       }

@@ -152,6 +152,7 @@ export class StdhubPluginApi {
 
   /**
    * Get the XUID of the player with the specified name.
+   * Relies on backend cache; may be undefined if the player has never joined the server.
    * @param name The name a.k.a. Xbox gamer tag of player.
    */
   async getXuidByName(name: string) {
@@ -160,6 +161,7 @@ export class StdhubPluginApi {
 
   /**
    * Get the name of the player with the specified XUID.
+   * Relies on backend cache; may be undefined if the player has never joined the server.
    * @param xuid The XUID of player.
    */
   async getNameByXuid(xuid: string) {
@@ -173,7 +175,7 @@ export class StdhubPluginApi {
   async getPlayerByXuid(xuid: string) {
     const name = await this.getNameByXuid(xuid);
     if (!name) {
-      return null;
+      return undefined;
     }
     return this.getPlayerByName(name);
   }

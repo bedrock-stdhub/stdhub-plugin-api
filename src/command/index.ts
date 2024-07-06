@@ -106,8 +106,8 @@ export class Command {
       return callback(player, parsedOrError);
     }
     if (partiallyUnmatched.length === 0) {
-      throw '§cNo pattern matched input. Possible: §a\n' + (
-        this.handlers.map(({ pattern }) => `  - ${$patternToString(pattern)}`)
+      throw '§cNo pattern matched input. Possible:\n' + (
+        this.handlers.map(({ pattern }) => `  §a- ${$patternToString(pattern)}`)
       ).join('\n');
     } else {
       throw partiallyUnmatched.join('\n');

@@ -7,7 +7,7 @@ import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
 import { $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
-import { world } from '@minecraft/server';
+import { Player, world } from '@minecraft/server';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -178,6 +178,15 @@ export class StdhubPluginApi {
       return undefined;
     }
     return this.getPlayerByName(name);
+  }
+
+  /**
+   * Kick a player with a reason.
+   * @param player The player to kick.
+   * @param reason The reason to kick, for example, 'You have been banned'.
+   */
+  async kickPlayer(player: Player, reason: string) {
+    player.dimension.runCommand(`kick "${player.name}" ${reason}`);
   }
 
   /**

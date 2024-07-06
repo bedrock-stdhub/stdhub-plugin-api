@@ -5,7 +5,7 @@ import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
 import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
-import { $getAllPlayers, $getPlayerById, $getPlayerByName } from './player';
+import { $getAllPlayers, $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
 
 export class StdhubPluginApi {
@@ -146,6 +146,34 @@ export class StdhubPluginApi {
    */
   getAllPlayers() {
     return $getAllPlayers();
+  }
+
+  /**
+   * Get the XUID of the player with the specified name.
+   * @param name The name a.k.a. Xbox gamer tag of player.
+   */
+  async getXuidByName(name: string) {
+    return $getXuidByName(this.backendAddress, name);
+  }
+
+  /**
+   * Get the name of the player with the specified XUID.
+   * @param xuid The XUID of player.
+   */
+  async getNameByXuid(xuid: string) {
+    return $getNameByXuid(this.backendAddress, xuid);
+  }
+
+  /**
+   * Get the Player object with the specified XUID. May be undefined if the player is not present.
+   * @param xuid The XUID of player.
+   */
+  async getPlayerByXuid(xuid: string) {
+    const name = await this.getNameByXuid(xuid);
+    if (!name) {
+      return null;
+    }
+    return this.getPlayerByName(name);
   }
 
   /**

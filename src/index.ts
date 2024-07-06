@@ -5,7 +5,7 @@ import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
 import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
-import { $getPlayerById, $getPlayerByName } from './player';
+import { $getAllPlayers, $getPlayerById, $getPlayerByName } from './player';
 import $log from './log';
 
 export class StdhubPluginApi {
@@ -139,6 +139,13 @@ export class StdhubPluginApi {
    */
   getPlayerByName(name: string) {
     return $getPlayerByName(name);
+  }
+
+  /**
+   * Get all players currently online.
+   */
+  getAllPlayers() {
+    return $getAllPlayers();
   }
 
   /**

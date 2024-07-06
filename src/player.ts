@@ -22,3 +22,7 @@ export function $getPlayerById(id: string) {
 export function $getPlayerByName(name: string) {
   return name2Player.get(name);
 }
+
+export function $getAllPlayers() {
+  return Array.from(id2Player.values());
+}

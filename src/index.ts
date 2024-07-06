@@ -5,8 +5,9 @@ import { $deleteData, $readData, $writeData } from './data';
 import { variables } from '@minecraft/server-admin';
 import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
-import { $getAllPlayers, $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
+import { $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
+import { world } from '@minecraft/server';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -143,9 +144,10 @@ export class StdhubPluginApi {
 
   /**
    * Get all players currently online.
+   * @deprecated use world.getAllPlayers() instead.
    */
   getAllPlayers() {
-    return $getAllPlayers();
+    return world.getAllPlayers();
   }
 
   /**

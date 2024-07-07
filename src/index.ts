@@ -8,6 +8,19 @@ import { $registerCommand, $startService } from './command/service';
 import { $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
 import { Player, world } from '@minecraft/server';
+import {
+  $addPlayerToGroup,
+  $createGroup,
+  $deleteGroup,
+  $grantPermissionToGroup,
+  $listAllGroups,
+  $listAllPermissions,
+  $listExplicitPermissions,
+  $listGroupsOfPlayer,
+  $listPlayersInGroup,
+  $removePlayerFromGroup,
+  $revokePermissionFromGroup,
+} from './perm';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -197,6 +210,104 @@ export class StdhubPluginApi {
    */
   async log(content: string) {
     await $log(this.backendAddress, this.namespace, content);
+  }
+
+  /**
+   * Create a permission group.
+   * @param groupName The name of the group.
+   * @param extendsFrom The group to extend from. If not provided, the group extends from the default group.
+   */
+  async createPermissionGroup(groupName: string, extendsFrom?: string) {
+    await $createGroup(this.backendAddress, groupName, extendsFrom);
+  }
+
+  /**
+   * Delete a permission group.
+   * @param groupName The name of the group.
+   */
+  async deletePermissionGroup(groupName: string) {
+    await $deleteGroup(this.backendAddress, groupName);
+  }
+
+  /**
+   * Grant a permission to a group.
+   * @param groupName The name of the group.
+   * @param permission The permission to grant.
+   */
+  async grantPermissionToGroup(groupName: string, permission: string) {
+    await $grantPermissionToGroup(this.backendAddress, groupName, permission);
+  }
+
+  /**
+   * Revoke a permission from a group.
+   * @param groupName The name of the group.
+   * @param permission The permission to revoke.
+   */
+  async revokePermissionFromGroup(groupName: string, permission: string) {
+    await $revokePermissionFromGroup(this.backendAddress, groupName, permission);
+  }
+
+  /**
+   * Add a player to a group.
+   * @param player The player to add.
+   * @param groupName The name of the group.
+   */
+  async addPlayerToGroup(player: Player | string, groupName: string) {
+    await $addPlayerToGroup(this.backendAddress, (await this.getXuidByName(
+      player instanceof Player ? player.name : player
+    ))!, groupName);
+  }
+
+  /**
+   * Remove a player from a group.
+   * @param player The player to remove.
+   * @param groupName The name of the group.
+   */
+  async removePlayerFromGroup(player: Player | string, groupName: string) {
+    await $removePlayerFromGroup(this.backendAddress, (await this.getXuidByName(
+      player instanceof Player ? player.name : player
+    ))!, groupName);
+  }
+  /**
+   * List all groups that the specified player is in.
+   * @param player The player to list.
+   */
+  async listGroupsOfPlayer(player: Player | string) {
+    return await $listGroupsOfPlayer(this.backendAddress, (await this.getXuidByName(
+      player instanceof Player ? player.name : player
+    ))!);
+  }
+  /**
+   * List all players in the specified group.
+   * @param groupName The name of the group.
+   */
+  async listPlayersInGroup(groupName: string) {
+    return (await Promise.all((await $listPlayersInGroup(this.backendAddress, groupName))
+    .map(xuid => this.getPlayerByXuid(xuid))))
+    .filter(playerOrUndefined => playerOrUndefined !== undefined);
+  }
+
+  /**
+   * List all groups.
+   */
+  async listAllGroups() {
+    return await $listAllGroups(this.backendAddress);
+  }
+
+  /**
+   * List all explicit permissions of the specified group.
+   * @param groupName
+   */
+  async listExplicitPermissionsOfGroup(groupName: string) {
+    return await $listExplicitPermissions(this.backendAddress, groupName);
+  }
+
+  /**
+   * List all permissions of the specified group, including inherited ones.
+   * @param groupName
+   */
+  async listAllPermissionsOfGroup(groupName: string) {
+    return await $listAllPermissions(this.backendAddress, groupName);
   }
 }
 

@@ -118,12 +118,14 @@ export class StdhubPluginApi {
    * Register a command.
    * @param name The name of command. When calling, use `.${name}`.
    * @param command The command to register. At lease one pattern should be specified.
+   * @param permission The permission required to execute the command.
+   * If not provided or an empty string `''`, the command is available to all players.
    */
-  registerCommand(name: string, command: Command) {
+  registerCommand(name: string, command: Command, permission?: string) {
     if (command.handlers.length === 0) {
       throw 'At lease one pattern should be specified';
     }
-    return $registerCommand(this.backendAddress, this.namespace, name, command);
+    return $registerCommand(this.backendAddress, this.namespace, name, command, permission);
   }
 
   /**

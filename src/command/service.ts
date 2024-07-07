@@ -70,10 +70,17 @@ export function $findCommand(name: string) {
   return commands.get(name);
 }
 
-export async function $registerCommand(backendAddress: string, namespace: string, commandName: string, command: Command) {
+export async function $registerCommand(
+  backendAddress: string,
+  namespace: string,
+  commandName: string,
+  command: Command,
+  permission?: string
+) {
   const { ok } = await $postJson(`${backendAddress}/command/register`, {
     namespace,
-    commandName
+    commandName,
+    permission
   });
   if (!ok || commands.has(commandName)) {
     throw `Command ${commandName} has been registered`;

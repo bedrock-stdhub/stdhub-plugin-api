@@ -1,5 +1,5 @@
 import $parse, { ParsePattern, Pattern } from './parse';
-import { Player } from '@minecraft/server';
+import { Player, system } from '@minecraft/server';
 import { Terminal } from '../index';
 
 export class Command {
@@ -9,7 +9,7 @@ export class Command {
   readonly handlers: {
     pattern: Pattern,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback: (caller: Player | Terminal, args: any) => void;
+    callback: (caller: Player | Terminal, args: any) => void | Promise<void>;
   }[] = [];
 
   /**
@@ -86,13 +86,14 @@ export class Command {
    */
   addHandler<T extends Pattern>(
     pattern: T,
-    callback: (caller: Player | Terminal, args: ParsePattern<T>) => void,
+    callback: (caller: Player | Terminal, args: ParsePattern<T>) => void | Promise<void>,
   ): this {
     this.handlers.push({ pattern, callback });
     return this;
   }
 
-  $handle(player: Player | Terminal, tokens: string[]) {
+  $handle(caller: Player | Terminal, tokens: string[]) {
+    let matched = false;
     const partiallyUnmatched: string[] = [];
     for (const { pattern, callback } of this.handlers) {
       const parsedOrError = $parse(tokens, pattern);
@@ -103,14 +104,28 @@ export class Command {
         }
         continue;
       }
-      return callback(player, parsedOrError);
+      system.run(async () => {
+        try {
+          await callback(caller, parsedOrError);
+        } catch (e) {
+          if (typeof e === 'string') {
+            caller.sendMessage(`§c${e}`);
+          } else {
+            caller.sendMessage(`§cInternal error: ${e}`);
+          }
+        }
+      });
+      matched = true;
+      break;
     }
-    if (partiallyUnmatched.length === 0) {
-      throw '§cNo pattern matched input. Possible:\n' + (
-        this.handlers.map(({ pattern }) => `  §a- ${$patternToString(pattern)}`)
-      ).join('\n');
-    } else {
-      throw partiallyUnmatched.join('\n');
+    if (!matched) {
+      if (partiallyUnmatched.length === 0) {
+        caller.sendMessage('§cNo pattern matched input. Possible:\n' + (
+          this.handlers.map(({ pattern }) => `  §a- ${$patternToString(pattern)}`)
+        ).join('\n'));
+      } else {
+        caller.sendMessage(partiallyUnmatched.join('\n'));
+      }
     }
   }
 }

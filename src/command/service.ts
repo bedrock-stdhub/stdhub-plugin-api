@@ -46,15 +46,7 @@ export function $startService(backendAddress: string, namespace: string) {
       return;
     }
     const tokensWithoutCmdName = tokens.slice(1);
-    try {
-      command.$handle(caller, tokensWithoutCmdName);
-    } catch (e) {
-      if (typeof e === 'string') {
-        caller.sendMessage(`${e}`);
-      } else {
-        caller.sendMessage(`§cInternal error: ${e}`);
-      }
-    }
+    command.$handle(caller, tokensWithoutCmdName);
   });
 }
 

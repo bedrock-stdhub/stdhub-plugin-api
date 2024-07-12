@@ -7,7 +7,7 @@ import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
 import { $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
-import { Player, world } from '@minecraft/server';
+import { world } from '@minecraft/server';
 import {
   $addPlayerToGroup,
   $createGroup,
@@ -21,6 +21,8 @@ import {
   $removePlayerFromGroup,
   $revokePermissionFromGroup,
 } from './perm';
+
+import { IStablePlayer } from './stable/IStablePlayer';
 
 export class StdhubPluginApi {
   readonly namespace: string;
@@ -200,7 +202,7 @@ export class StdhubPluginApi {
    * @param player The player to kick.
    * @param reason The reason to kick, for example, 'You have been banned'.
    */
-  async kickPlayer(player: Player, reason: string) {
+  async kickPlayer(player: IStablePlayer, reason: string) {
     player.dimension.runCommand(`kick "${player.name}" ${reason}`);
   }
 
@@ -252,9 +254,9 @@ export class StdhubPluginApi {
    * @param player The player to add.
    * @param groupName The name of the group.
    */
-  async addPlayerToGroup(player: Player | string, groupName: string) {
+  async addPlayerToGroup(player: IStablePlayer | string, groupName: string) {
     await $addPlayerToGroup(this.backendAddress, (await this.getXuidByName(
-      player instanceof Player ? player.name : player
+      typeof player === 'string' ? player : player.name
     ))!, groupName);
   }
 
@@ -263,18 +265,18 @@ export class StdhubPluginApi {
    * @param player The player to remove.
    * @param groupName The name of the group.
    */
-  async removePlayerFromGroup(player: Player | string, groupName: string) {
+  async removePlayerFromGroup(player: IStablePlayer | string, groupName: string) {
     await $removePlayerFromGroup(this.backendAddress, (await this.getXuidByName(
-      player instanceof Player ? player.name : player
+      typeof player === 'string' ? player : player.name
     ))!, groupName);
   }
   /**
    * List all groups that the specified player is in.
    * @param player The player to list.
    */
-  async listGroupsOfPlayer(player: Player | string) {
+  async listGroupsOfPlayer(player: IStablePlayer | string) {
     return await $listGroupsOfPlayer(this.backendAddress, (await this.getXuidByName(
-      player instanceof Player ? player.name : player
+      typeof player === 'string' ? player : player.name
     ))!);
   }
   /**

@@ -1,7 +1,7 @@
 {
   "name": "stdhub-plugin-api",
   "type": "module",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Server-side API for stdhub plugins.",
   "main": "src/index.ts",
   "scripts": {},

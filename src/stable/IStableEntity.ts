@@ -1,6 +1,6 @@
-import { Dimension } from '@minecraft/server';
+import { IStableDimension } from './IStableDimension';
 
 export interface IStableEntity {
-  readonly dimension: Dimension;
+  readonly dimension: IStableDimension;
   readonly id: string;
 }

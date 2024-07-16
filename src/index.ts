@@ -7,7 +7,7 @@ import { Command } from './command';
 import { $registerCommand, $startService } from './command/service';
 import { $getNameByXuid, $getPlayerById, $getPlayerByName, $getXuidByName } from './player';
 import $log from './log';
-import { world } from '@minecraft/server';
+import { Dimension, world } from '@minecraft/server';
 import {
   $addPlayerToGroup,
   $createGroup,
@@ -203,7 +203,7 @@ export class StdhubPluginApi {
    * @param reason The reason to kick, for example, 'You have been banned'.
    */
   async kickPlayer(player: IStablePlayer, reason: string) {
-    player.dimension.runCommand(`kick "${player.name}" ${reason}`);
+    (player.dimension as Dimension).runCommand(`kick "${player.name}" ${reason}`);
   }
 
   /**

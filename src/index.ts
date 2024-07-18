@@ -106,9 +106,13 @@ export class StdhubPluginApi {
   /**
    * Read the data file at the specified path.
    * @param subDataPath The path of data file to read.
+   * @param isWorldSpecific Whether the data is world-specific. `false` by default.
+   * Generally, if your data contains block / entity data, it should be world-specific.
+   * Then the data will be stored in the world directory and should be moved along with the world.
+   * Otherwise, the data will be stored in the plugin directory.
    */
-  async readData(subDataPath: string) {
-    return $readData(this.backendAddress, this.namespace, subDataPath);
+  async readData(subDataPath: string, isWorldSpecific: boolean = false) {
+    return $readData(this.backendAddress, this.namespace, subDataPath, isWorldSpecific);
   }
 
   /**
@@ -116,17 +120,25 @@ export class StdhubPluginApi {
    * @param subDataPath The destination path to write to.
    * The data is stored in JSON format, so a path with an extension `.json` is recommended.
    * @param data The data object to write.
+   * @param isWorldSpecific Whether the data is world-specific. `false` by default.
+   * Generally, if your data contains block / entity data, it should be world-specific.
+   * Then the data will be stored in the world directory and should be moved along with the world.
+   * Otherwise, the data will be stored in the plugin directory.
    */
-  async writeData(subDataPath: string, data: unknown) {
-    return $writeData(this.backendAddress, this.namespace, subDataPath, data);
+  async writeData(subDataPath: string, data: unknown, isWorldSpecific: boolean = false) {
+    return $writeData(this.backendAddress, this.namespace, subDataPath, data, isWorldSpecific);
   }
 
   /**
    * Delete the data file at the specified path.
    * @param subDataPath The path of data file to delete.
+   * @param isWorldSpecific Whether the data is world-specific. `false` by default.
+   * Generally, if your data contains block / entity data, it should be world-specific.
+   * Then the data will be stored in the world directory and should be moved along with the world.
+   * Otherwise, the data will be stored in the plugin directory.
    */
-  async deleteData(subDataPath: string) {
-    return $deleteData(this.backendAddress, this.namespace, subDataPath);
+  async deleteData(subDataPath: string, isWorldSpecific: boolean = false) {
+    return $deleteData(this.backendAddress, this.namespace, subDataPath, isWorldSpecific);
   }
 
   /**
